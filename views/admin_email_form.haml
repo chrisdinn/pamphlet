@@ -1,0 +1,20 @@
+%form{ :method => :post}
+	%fieldset
+		%legend
+			Enter your email address
+		%p
+			Once you hit 'send', you'll be sent an email containing the final activation instructions
+			for this site. It's important that your email address is verified so that you'll have a
+			reliable way to reset the admin password if you lose it.
+		%div
+			%label
+				Email
+				%input{ :type => :text, :name => :email}
+		%div
+			%label
+				Email confirmation
+				%input{ :type => :text, :name => :email_confirmation}
+			%small
+				(twice for confirmation)
+		%input{:type => :hidden, :name => :activation_code, :value => params[:activation_code] }
+		%input{:type => :submit, :value => "send" }
