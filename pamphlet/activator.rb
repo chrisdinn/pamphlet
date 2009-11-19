@@ -44,7 +44,7 @@ module Pamphlet
           if (params[:email]&&params[:email_confirmation]) && params[:email]==params[:email_confirmation]
             @email = params[:email]
             @email_activation_code = Pamphlet.settings['email_activation_code'] || Digest::SHA256.hexdigest(@email + Pamphlet::ACTIVATION_SALT)
-            File.open(Pamphlet::SETTINGS_FILE, 'a') { |f| f.write("email_activation_code: #{@email_activation_code}")}
+            Pamphlet.settings['email_activation_code'] =  @email_activation_code
             # Send activation email
             mail = Mail.new({ :to => @email, :from => 'do_not_reply@chrisdinn.ca', :subject => 'Activate your new website', :body => @email_activation_code })
             mail.deliver!
@@ -58,10 +58,6 @@ module Pamphlet
       #  halt 422, "Sorry, activation invalid." # Unprocessable entity
         end
       end
-    end
-    
-    helpers do
-      
     end
     
   end
