@@ -10,7 +10,7 @@ class ActivatorTest < Test::Unit::TestCase
     setup do
       Mail.deliveries.clear
       File.delete(Pamphlet::ACTIVATION_FILE) if File.exist?(Pamphlet::ACTIVATION_FILE)
-      File.open(Pamphlet::SETTINGS_FILE, 'w') {|f| f.write({'activation_code_digest' => Digest::SHA256.hexdigest("abcd1234" + Pamphlet::ACTIVATION_SALT)}.to_yaml)}
+      Pamphlet.settings['activation_code_digest'] = Digest::SHA256.hexdigest("abcd1234" + Pamphlet::ACTIVATION_SALT)
     end
     
     should "display the activation form" do

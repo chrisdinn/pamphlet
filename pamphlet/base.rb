@@ -2,7 +2,7 @@ module Pamphlet
   
   SETTINGS_FILE = "settings.yml"
     
-  # All parts of Pamphlet share a single settings file
+  # All parts of Pamphlet share a single settings instance
   def self.settings
     @settings = Pamphlet::Settings.load(SETTINGS_FILE)
   end
