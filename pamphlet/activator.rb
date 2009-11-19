@@ -28,7 +28,7 @@ module Pamphlet
       elsif check_email_confirmation(params[:email], params[:email_confirmation])
           Pamphlet.settings.set_admin_email_activation_code(params[:email])  
           # Send activation email
-          mail = Mail.new({ :to => params[:email], :from => 'do_not_reply@chrisdinn.ca', :subject => 'Activate your new website', :body => Pamphlet.settings[:email_activation_code_digest] })
+          mail = Mail.new({ :to => params[:email], :from => 'do_not_reply@chrisdinn.ca', :subject => 'Activate your new website', :body => "#{Pamphlet::ACTIVATION_URL}/#{Pamphlet.settings[:email_activation_code_digest]}/edit" })
           mail.deliver!
           haml :admin_email_sent
       else
