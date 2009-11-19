@@ -13,7 +13,7 @@ module Pamphlet
     end
     
     def call(env)
-      if File.exist?(Pamphlet::ACTIVATION_FILE) || env["PATH_INFO"]==Pamphlet::ACTIVATION_URL
+      if File.exist?(Pamphlet::ACTIVATION_FILE) || Regexp.new("^" + Pamphlet::ACTIVATION_URL)=~env["PATH_INFO"]
         @app.call(env)
       else
         [301, {"Location" => Pamphlet::ACTIVATION_URL, "Content-Type" => "text/html"}, "Redirecting to: #{Pamphlet::ACTIVATION_URL}"]

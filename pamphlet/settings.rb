@@ -30,6 +30,25 @@ module Pamphlet
       write_to_file
     end
     
+    def set_activation_code(activation_code)
+      self.store( :activation_code_digest, Pamphlet.salted_digest(activation_code) )
+      write_to_file
+    end
+    
+    def activation_code_valid?(activation_code)
+      Pamphlet.salted_digest(activation_code) == self[:activation_code_digest]
+    end
+    
+    def set_admin_email_activation_code(admin_email)
+      self.store( :email_activation_code_digest, Pamphlet.salted_digest(admin_email) )
+      self.store( :admin_email, admin_email)
+      write_to_file
+    end
+    
+    def admin_email_activation_code_valid?(activation_code)
+      Pamphlet.salted_digest(activation_code) == self[:email_activation_code_digest]
+    end
+    
     private
     
     def load_from_file

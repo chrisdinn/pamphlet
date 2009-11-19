@@ -9,8 +9,8 @@ class ActivatorTest < Test::Unit::TestCase
   context "when the application is not activated" do
     setup do
       Mail.deliveries.clear
-      File.delete(Pamphlet::ACTIVATION_FILE) if File.exist?(Pamphlet::ACTIVATION_FILE)
-      Pamphlet.settings['activation_code_digest'] = Digest::SHA256.hexdigest("abcd1234" + Pamphlet::ACTIVATION_SALT)
+      Pamphlet.deactivate
+      Pamphlet.settings.set_activation_code("abcd1234")
     end
     
     should "display the activation form" do
@@ -18,14 +18,9 @@ class ActivatorTest < Test::Unit::TestCase
       assert last_response.ok?
       assert last_response.body.include?("Enter activation code")
     end
-    
-    #should "activate the application for users that have the activation code" do
-    #  assert !File.exist?(Pamphlet::ACTIVATION_FILE)
-    #  post Pamphlet::ACTIVATION_URL, :activation_code => "abcd1234"
-    #  assert File.exist?(Pamphlet::ACTIVATION_FILE)
-    #end
+
     should "display the admin email form to users that have the activation code" do
-      post Pamphlet::ACTIVATION_URL, :activation_code => "abcd1234"
+      get Pamphlet::ACTIVATION_URL, :activation_code => "abcd1234"
       assert last_response.ok?
       assert last_response.body.include?('Enter your email address')
     end
@@ -35,14 +30,31 @@ class ActivatorTest < Test::Unit::TestCase
       assert last_response.ok?
       assert_equal 1, Mail.deliveries.length
       assert_contains Mail.deliveries.first.to.addresses, "test@pamphlet.com"
-      assert Mail.deliveries.first.body.to_s.include?(Digest::SHA256.hexdigest("test@pamphlet.com" + Pamphlet::ACTIVATION_SALT))
+      assert Mail.deliveries.first.body.to_s.include?( Pamphlet.salted_digest("test@pamphlet.com") )
+      assert last_response.body.include?("email sent")
     end
-        
+    
+    should "display admin password form for a user with a verified email address" do
+      Pamphlet.settings.set_admin_email_activation_code("test2@pamphlet.com")
+      get "#{Pamphlet::ACTIVATION_URL}/#{Pamphlet.settings[:email_activation_code_digest]}/edit"
+      assert last_response.ok?
+      assert last_response.body.include?("password")
+    end
+    
+    should "create admin user and activate application" do
+      assert !Pamphlet.activated?
+      Pamphlet.settings.set_admin_email_activation_code("test3@pamphlet.com")
+      put "#{Pamphlet::ACTIVATION_URL}/#{Pamphlet.settings[:email_activation_code_digest]}", :password => "test3password", :password_confirmation => "test3password"
+      assert last_response.ok?
+      assert Pamphlet.activated?
+      assert_equal Pamphlet.settings[:admin_password], Pamphlet.salted_digest("test3password")
+    end
+
   end
   
   context "when the application has been activated" do
     setup do
-      File.open(Pamphlet::ACTIVATION_FILE, 'w') {|f| f.write("abcd1234") } unless File.exist?(Pamphlet::ACTIVATION_FILE)
+      Pamphlet.activate("abcd1234")
     end
     
     should "not display the activation form" do
