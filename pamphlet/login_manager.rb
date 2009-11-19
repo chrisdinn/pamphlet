@@ -1,6 +1,4 @@
-#Warden::Manager.serialize_into_session{|user| user.persistant_token }
-#Warden::Manager.serialize_from_session{|id| Pamphlet.find_user(id)  }
-
+# Define user serialization
 module Warden
   module Serializers
     class Session < Base
@@ -19,6 +17,7 @@ end
 
 module Pamphlet
   
+  # Define login strategies. Just the admin user from the settings file for now.
   Warden::Strategies.add(:settings_file) do
     def valid?
       params["email"]==Pamphlet.settings[:admin_email]
