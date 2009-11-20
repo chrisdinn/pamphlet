@@ -1,0 +1,20 @@
+%p
+	%a{ :href => "/edit" }> /edit
+	%a{ :href => "/pages" } /pages
+
+%form{:method =>:post, :action => "/pages/#{@page.id unless @page.new_record? }"}
+	- unless @page.new_record?
+		%input{ :type => :hidden, :name => "_method", :value => :put }
+	%fieldset
+		%legend Edit page
+		%label 
+			Name
+			%input{:type => :text, :name => "page[name]", :value => "#{@page.name}"}
+		%label 
+			Template id
+			%input{:type => :text, :name => "page[template_id]", :value => "#{@page.template_id}"}
+		%label 
+			Content
+			%textarea{:name => "page[content]"}
+				= @page.content
+	%input{ :type => :submit }

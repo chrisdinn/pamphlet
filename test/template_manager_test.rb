@@ -19,11 +19,23 @@ class TemplateManagerTest < Test::Unit::TestCase
         Pamphlet::Template.create([{:name => "Template 1"}, {:name => "Template 2"}])
       end
     
-      should "display list with both template" do
+      should "display list with both templates" do
         get "/templates"
         assert last_response.ok?
         assert last_response.body.include?("Template 1")
         assert last_response.body.include?("Template 2")
+      end
+      
+      should "allow new template to be created" do
+        get "/templates/new"
+        assert last_response.ok?
+        
+        test_time = (Time.now - 1.day).to_s
+        post "/templates", :template => { :name => "New template", :description => test_time  }
+        assert 302, last_response.status
+        follow_redirect!
+        assert last_response.ok?
+        assert last_response.body.include?(test_time)
       end
       
       should "allow templates to be edited" do
@@ -33,7 +45,7 @@ class TemplateManagerTest < Test::Unit::TestCase
         assert last_response.body.include?(template.name)
         
         test_time = Time.now.to_s
-        post "/templates/#{template.id}", :template => { :description => test_time }
+        put "/templates/#{template.id}", :template => { :description => test_time }
         assert 302, last_response.status
         follow_redirect!
         assert last_response.ok?

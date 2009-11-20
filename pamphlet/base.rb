@@ -38,7 +38,6 @@ module Pamphlet
     
     get "/edit" do
       env['warden'].authenticate!
-      @templates = Template.all
       haml :edit
     end
     

@@ -12,9 +12,19 @@ module Pamphlet
       env['warden'].authenticate!
     end
     
-    get "/templates" do
+    get "/templates/?" do
       @templates = Template.all
       haml :templates
+    end
+    
+    get "/templates/new" do
+      @template = Template.new
+      haml :template
+    end
+    
+    post "/templates/?" do
+      @template = Template.create(params[:template])
+      redirect "/templates/#{@template.id}/edit"
     end
     
     get "/templates/:id/edit" do
@@ -23,7 +33,7 @@ module Pamphlet
       haml :template
     end
     
-    post "/templates/:id/?" do
+    put "/templates/:id/?" do
       @template = Template.find_by_id params[:id]
       halt 404, "Template not found" unless @template
       @template.update_attributes(params[:template])
