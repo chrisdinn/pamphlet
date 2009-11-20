@@ -31,9 +31,7 @@ module Pamphlet
   def self.activated?
     File.exist?(ACTIVATION_FILE)
   end
-  
-  ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'pamphlet.sqlite3.db'
-  
+    
   class Base < Sinatra::Base
     get "/" do
       haml "%p Damn this pamphlet is interesting."
