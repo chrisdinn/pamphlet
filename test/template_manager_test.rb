@@ -22,8 +22,8 @@ class TemplateManagerTest < Test::Unit::TestCase
       should "display list with both template" do
         get "/templates"
         assert last_response.ok?
-        asset last_response.body.include?("Template 1")
-        asset last_response.body.include?("Template 2")
+        assert last_response.body.include?("Template 1")
+        assert last_response.body.include?("Template 2")
       end
     end
   end

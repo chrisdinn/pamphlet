@@ -9,9 +9,10 @@ module Pamphlet
   
   class TemplateManager < Sinatra::Base
     
-    get "/template" do
+    get "/templates" do
       env['warden'].authenticate!
-      haml "%h1 good to go"
+      @templates = Template.all
+      haml :templates
     end
     
   end
