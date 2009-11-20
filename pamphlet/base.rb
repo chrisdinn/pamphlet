@@ -1,5 +1,6 @@
 require 'mail'
 require 'sinatra/base'
+require 'active_record'
 
 module Pamphlet
   
@@ -31,6 +32,8 @@ module Pamphlet
     File.exist?(ACTIVATION_FILE)
   end
   
+  ActiveRecord::Base.establish_connection :adapter => 'sqlite3', :database =>  'pamphlet.sqlite3.db'
+  
   class Base < Sinatra::Base
     get "/" do
       haml "%p Damn this pamphlet is interesting."
@@ -38,9 +41,13 @@ module Pamphlet
     
     get "/edit" do
       env['warden'].authenticate!
+      @templates = Template.all
       haml :edit
     end
     
+  end
+  
+  class Template < ActiveRecord::Base
   end
   
 end

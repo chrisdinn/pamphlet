@@ -2,3 +2,7 @@
 %ol
 	%li
 		%a{ :href => "/settings/edit" } Settings
+%ul
+	- @templates.each do |template|
+		%li= template.name
+	
