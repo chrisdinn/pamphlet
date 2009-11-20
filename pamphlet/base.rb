@@ -1,6 +1,5 @@
 require 'mail'
 require 'sinatra/base'
-require 'active_record'
 
 module Pamphlet
   
@@ -43,9 +42,6 @@ module Pamphlet
       haml :edit
     end
     
-  end
-  
-  class Template < ActiveRecord::Base
   end
   
 end
