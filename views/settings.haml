@@ -1,7 +1,9 @@
+%p
+	%a{ :href => "/edit" } <- /edit
 %form{:method =>:post, :action => "/settings"}
 	%fieldset
 		%legend
-			Edit settings
+			Settings
 		%ol
 			- Pamphlet.settings.editable.each do |setting, value|
 				%li

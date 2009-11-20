@@ -35,12 +35,11 @@ module Pamphlet
     use Rack::Session::Cookie
     use Warden::Manager do |manager|
         manager.default_strategies :settings_file
-        manager.failure_app = lambda { |env| [401, {'Content-Type' => 'text/html'}, "Login failed. You don't belong here. I hope you realize what you've done. We'll find you."]}
-    end #LoginManager
+        manager.failure_app = LoginManager #lambda { |env| [401, {'Content-Type' => 'text/html'}, "Login failed. You don't belong here. I hope you realize what you've done. We'll find you."]}
+    end 
     
-    post '/unauthenticated/?' do
-      status 401
-      haml :login
+    get '/unauthenticated/?' do
+      redirect '/login'
     end
 
     get '/login/?' do

@@ -85,7 +85,7 @@ class SettingsTest < Test::Unit::TestCase
       
       get "/settings/edit"
       assert last_response.ok?
-      assert last_response.body.include?('settings')
+      assert last_response.body.include?('Settings')
       
       password_hash = Pamphlet.salted_digest(Time.now.to_s)
       post "/settings", :settings => { :database_username => "root", :database_password => password_hash }

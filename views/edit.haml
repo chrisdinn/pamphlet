@@ -2,7 +2,8 @@
 %ol
 	%li
 		%a{ :href => "/settings/edit" } Settings
-%ul
-	- @templates.each do |template|
-		%li= template.name
+	%li
+		%a{ :href => "/templates" } Templates
+	%li
+		%a{ :href => "/logout" } Logout
 	
