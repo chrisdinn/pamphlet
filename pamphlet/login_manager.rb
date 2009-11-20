@@ -15,19 +15,20 @@ module Warden
   end
 end
 
-module Pamphlet
-  
-  # Define login strategies. Just the admin user from the settings file for now.
-  Warden::Strategies.add(:settings_file) do
-    def valid?
-      params["email"]==Pamphlet.settings[:admin_email]
-    end
-
-    def authenticate!
-      a = Pamphlet::AdminUser.authenticate(params["email"], params["password"])
-      a.nil? ? fail!("Could not log in") : success!(a)
-    end
+# Define login strategies. Just the admin user from the settings file for now.
+Warden::Strategies.add(:settings_file) do
+  def valid?
+    params["email"]==Pamphlet.settings[:admin_email]
   end
+
+  def authenticate!
+    a = Pamphlet::AdminUser.authenticate(params["email"], params["password"])
+    a.nil? ? fail!("Could not log in") : success!(a)
+  end
+end
+
+
+module Pamphlet
   
   class LoginManager < Sinatra::Base
 
@@ -35,7 +36,7 @@ module Pamphlet
     use Warden::Manager do |manager|
         manager.default_strategies :settings_file
         manager.failure_app = lambda { |env| [401, {'Content-Type' => 'text/html'}, "Login failed. You don't belong here. I hope you realize what you've done. We'll find you."]}
-    end # LoginManager 
+    end #LoginManager
     
     post '/unauthenticated/?' do
       status 401

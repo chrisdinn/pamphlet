@@ -32,7 +32,7 @@ module Pamphlet
           mail.deliver!
           haml :admin_email_sent
       else
-        halt 422, "Sorry, can't accept that email address, maybe your confirmations didn't match. Hit 'back' and try again."
+        halt 422, "Sorry, can't accept that email address, maybe your confirmation didn't match. Hit 'back' and try again."
       end
     end
     

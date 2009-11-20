@@ -1,0 +1,12 @@
+%form{:method =>:post, :action => "/settings"}
+	%fieldset
+		%legend
+			Edit settings
+		%ol
+			- Pamphlet.settings.editable.each do |setting, value|
+				%li
+					%label
+						= humanize_setting_name setting
+						%input{ :type => :text, :name=>"settings[#{setting}]", :value => "#{value}" }
+		%input{ :type => :submit, :value => "Update" }
+		

@@ -1,3 +1,5 @@
+require 'sinatra/base'
+
 module Pamphlet
   #
   # Settings
@@ -5,6 +7,8 @@ module Pamphlet
   # Make settings available as a convenient hash-like object
   # 
   class Settings < Hash
+    
+    @@private_settings = [:activation_code_digest, :admin_email, :admin_password, :email_activation_code_digest, :test_time]
     
     def initialize(settings_file)
       super
@@ -28,6 +32,17 @@ module Pamphlet
     def []=(setting, value)
       self.store(setting, value)
       write_to_file
+    end
+    
+    def update_settings(new_settings)
+      new_settings.each do |setting, value|
+        self[setting.to_sym] = value
+      end
+      write_to_file
+    end
+    
+    def editable
+      self.reject { |setting, value| @@private_settings.include?(setting) }
     end
     
     def set_activation_code(activation_code)
@@ -61,4 +76,30 @@ module Pamphlet
           
   end
   
+  # Simple sinatra app acts as controller for settings management
+  class SettingsManager < Sinatra::Base
+    
+    get "/settings/edit" do
+      env['warden'].authenticate!
+      haml :settings
+    end
+    
+    post "/settings/?" do
+      env['warden'].authenticate!
+      Pamphlet.settings.update_settings(params[:settings])
+      redirect "/settings/edit"
+    end
+    
+    get "/settings/?" do
+      halt 404, "page not found"
+    end
+    
+    helpers do
+      def humanize_setting_name(name)
+        name.to_s.gsub("_", ' ')
+      end
+    end
+    
+  end
+    
 end

@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class SettingsTest < Test::Unit::TestCase
+    
+  def app
+    Pamphlet::LoginManager.new(Pamphlet::SettingsManager) 
+  end
   
   should "not fail if no settings file exists" do
     File.delete(Pamphlet::SETTINGS_FILE) if File.exist?(Pamphlet::SETTINGS_FILE)
@@ -32,7 +36,14 @@ class SettingsTest < Test::Unit::TestCase
       time = Time.now.to_s
       @settings[:test_time] = time
       @settings.reload!
-      assert_equal @settings[:test_time], time
+      assert_equal time, @settings[:test_time]
+    end
+    
+    should "update settings from hash" do
+      time = (Time.now + 1.day).to_s
+      @settings.update_settings({:test_time => time })
+      @settings.reload!
+      assert_equal time, @settings[:test_time]
     end
   
     should "set the activation code" do
@@ -57,6 +68,45 @@ class SettingsTest < Test::Unit::TestCase
       @settings.set_admin_email_activation_code("test@settingstest.com")
       assert !@settings.admin_email_activation_code_valid?("catch-this@imnotwhoyouwat.com")
       assert @settings.admin_email_activation_code_valid?("test@settingstest.com")
+    end
+    
+  end
+  
+  context "when an activated application with a site admin exists" do
+    setup do
+      @admin_user = { :email => "test5@example.com", :password => "test5password" }
+      Pamphlet.activate(@admin_user[:email])
+      Pamphlet.settings[:admin_email] = @admin_user[:email]
+      Pamphlet.settings[:admin_password] = Pamphlet.salted_digest(@admin_user[:password]) 
+    end
+    
+    should "allow the admin user to edit and update settings" do
+      post '/login', :email => @admin_user[:email], :password => @admin_user[:password]
+      
+      get "/settings/edit"
+      assert last_response.ok?
+      assert last_response.body.include?('settings')
+      
+      password_hash = Pamphlet.salted_digest(Time.now.to_s)
+      post "/settings", :settings => { :database_username => "root", :database_password => password_hash }
+      follow_redirect!
+      assert last_response.ok?
+      assert last_response.body.include?("root")      
+      assert last_response.body.include?(password_hash)      
+    end
+    
+    should "not allow any other users to edit settings" do
+      get "/settings/edit"
+      assert_equal 401, last_response.status
+    end
+    
+    should "not display private settings on the settings page" do
+      Pamphlet.settings[:test_time] = "5:00pm"
+      post '/login', :email => @admin_user[:email], :password => @admin_user[:password]
+      get "/settings/edit"
+      
+      assert last_response.ok?
+      assert !last_response.body.include?("5:00pm") 
     end
     
   end
