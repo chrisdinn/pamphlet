@@ -1,4 +1,5 @@
 require 'mail'
+require 'sinatra/base'
 
 module Pamphlet
   
@@ -30,9 +31,9 @@ module Pamphlet
     File.exist?(ACTIVATION_FILE)
   end
   
-  class Base
-    def call(env)
-      [200, {'Content-Type' => 'text/html'}, "Damn this pamphlet is interesting."]
+  class Base < Sinatra::Base
+    get "/" do
+      haml "%p Damn this pamphlet is interesting."
     end
   end
   
