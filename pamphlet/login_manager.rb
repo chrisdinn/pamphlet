@@ -49,7 +49,7 @@ module Pamphlet
 
     post '/login/?' do
       env['warden'].authenticate!
-      redirect "/"
+      redirect "/edit"
     end
 
     get '/logout/?' do

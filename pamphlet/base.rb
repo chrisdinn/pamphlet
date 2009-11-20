@@ -9,7 +9,7 @@ module Pamphlet
   ACTIVATION_SALT = "d0hnt-h8"
     
   Mail.defaults { smtp 'outbox.allstream.net', 25 }
-    
+
   # All parts of Pamphlet share a single settings instance
   def self.settings
     @settings = Pamphlet::Settings.load(SETTINGS_FILE)
@@ -35,6 +35,12 @@ module Pamphlet
     get "/" do
       haml "%p Damn this pamphlet is interesting."
     end
+    
+    get "/edit" do
+      env['warden'].authenticate!
+      haml :edit
+    end
+    
   end
   
 end
