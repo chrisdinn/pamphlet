@@ -1,0 +1,16 @@
+%p
+	%a{ :href => "/edit" } <- /edit
+	%a{ :href => "/templates" } /templates
+%form{:method =>:post, :action => "/templates/#{@template.id}"}
+	%fieldset
+		%legend Edit template
+		%label 
+			Name
+			%input{:type => :text, :name => "template[name]", :value => "#{@template.name}"}
+		%label 
+			Description
+			%input{:type => :text, :name => "template[description]", :value => "#{@template.description}"}
+		%label 
+			Code
+			%textarea{:name => "template[code]"}
+				= @template.code

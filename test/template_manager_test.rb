@@ -6,7 +6,7 @@ class TemplateManagerTest < Test::Unit::TestCase
     Pamphlet::LoginManager.new(Pamphlet::TemplateManager) 
   end
   
-  context "when you're logged in" do
+  context "when the admin user is logged in" do
     setup do
       Pamphlet.settings[:admin_email] = "test4@example.com"
       Pamphlet.settings[:admin_password] = Pamphlet.salted_digest("test4password")
@@ -25,10 +25,24 @@ class TemplateManagerTest < Test::Unit::TestCase
         assert last_response.body.include?("Template 1")
         assert last_response.body.include?("Template 2")
       end
+      
+      should "allow templates to be edited" do
+        template = Pamphlet::Template.first
+        get "/templates/#{template.id}/edit"
+        assert last_response.ok?
+        assert last_response.body.include?(template.name)
+        
+        test_time = Time.now.to_s
+        post "/templates/#{template.id}", :template => { :description => test_time }
+        assert 302, last_response.status
+        follow_redirect!
+        assert last_response.ok?
+        assert last_response.body.include?(test_time)
+      end
     end
   end
   
-  context "when you're not logged in" do
+  context "when no user is logged in" do
     
     should "not show the templates list" do
       get "/templates"

@@ -27,6 +27,13 @@ Warden::Strategies.add(:settings_file) do
   end
 end
 
+Warden::Manager.before_failure do |env,opts|
+  # Sinatra is very sensitive to the request method
+  # since authentication could fail on any type of method, we need
+  # to set it for the failure app so it is routed to the correct block
+  env['REQUEST_METHOD'] = "POST"
+end
+
 
 module Pamphlet
   
@@ -38,8 +45,8 @@ module Pamphlet
         manager.failure_app = LoginManager #lambda { |env| [401, {'Content-Type' => 'text/html'}, "Login failed. You don't belong here. I hope you realize what you've done. We'll find you."]}
     end 
     
-    get '/unauthenticated/?' do
-      redirect '/login'
+    post '/unauthenticated/?' do
+      halt 401, "Login failed. Look like you're not welcome here."
     end
 
     get '/login/?' do
