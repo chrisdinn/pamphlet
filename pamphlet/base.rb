@@ -41,6 +41,13 @@ module Pamphlet
       haml :edit
     end
     
+    # The handler below, it really ties the app together.
+    get "/*" do
+      @page= Page.find_by_name params[:splat].first
+      halt 404, "Template not found" unless @page
+      @page.template.code
+    end
+    
   end
   
 end

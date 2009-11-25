@@ -4,7 +4,8 @@ module Pamphlet
   # A Rack middleware for checking the activation status of your Pamphlet.
   # 
   # Checks for the existence of an activation file. If it doesn't find one,
-  # all requests will be redirected to the activation url.
+  # all requests will be redirected to the activation url, save ones involved 
+  # in activating the app.
   # 
   class ActivationCheck
     

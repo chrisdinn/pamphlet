@@ -7,14 +7,18 @@
 		%input{ :type => :hidden, :name => "_method", :value => :put }
 	%fieldset
 		%legend Edit page
-		%label 
-			Name
-			%input{:type => :text, :name => "page[name]", :value => "#{@page.name}"}
-		%label 
-			Template id
-			%input{:type => :text, :name => "page[template_id]", :value => "#{@page.template_id}"}
-		%label 
-			Content
-			%textarea{:name => "page[content]"}
-				= @page.content
+		%ol
+			%li
+				%label 
+					Name
+					%input{:type => :text, :name => "page[name]", :value => "#{@page.name}"}
+			%li
+				%label 
+					Template id
+					%input{:type => :text, :name => "page[template_id]", :value => "#{@page.template_id}"}
+			%li
+				%label 
+					Content
+					%textarea{:name => "page[content]"}
+						= @page.content
 	%input{ :type => :submit }

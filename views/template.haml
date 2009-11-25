@@ -6,13 +6,17 @@
 		%input{ :type => :hidden, :name => "_method", :value => :put }
 	%fieldset
 		%legend Edit template
-		%label 
-			Name
-			%input{:type => :text, :name => "template[name]", :value => "#{@template.name}"}
-		%label 
-			Description
-			%input{:type => :text, :name => "template[description]", :value => "#{@template.description}"}
-		%label 
-			Code
-			%textarea{:name => "template[code]"}
-				= @template.code
+		%ol
+			%li
+				%label 
+					Name
+					%input{:type => :text, :name => "template[name]", :value => "#{@template.name}"}
+			%li
+				%label 
+					Description
+					%input{:type => :text, :name => "template[description]", :value => "#{@template.description}"}
+			%li
+				%label 
+					Code
+					%textarea{:name => "template[code]"}
+						= @template.code
